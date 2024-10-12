@@ -23,11 +23,15 @@ void isc_enable_flash();
 void lsc_init_address();
 void isc_disable();
 void isc_erase_sram();
-void isc_erase_flash();
+void isc_erase_flash(int CFG);
 void fast_program();
 void program_done();
 void verify_data();
 void program_data();
+
+void program_internal_flash(int CFG);
+
+
 
 
 

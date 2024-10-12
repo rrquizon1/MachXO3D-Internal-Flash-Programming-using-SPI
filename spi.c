@@ -242,7 +242,7 @@ int sr_check(int done){
 	 printf("Fail flag triggered. Exitin\n");
 	 exit(0);   
 	}
-     
+     //if (done==0 || done==1){
      if(bit8==done){
 	 printf("Done bit is %d. No errors\n",bit8);    
 	     
@@ -252,7 +252,7 @@ int sr_check(int done){
 	exit(0);    
 	     
 	}
-	
+	//}
      if(bit12==0){
 	 printf("Busy flag not triggered\n");   
 	     return 0;
@@ -296,7 +296,7 @@ void isc_enable_sram(){
 	gpiod_line_set_value(cs, 0);
 	rbpi_tx(write_buf,4);
 	gpiod_line_set_value(cs, 1);
-	printf("Device Enters Programming Mode");
+	printf("Device Enters Programming Mode: SRAM");
 	printf("\n");
 
 }
@@ -323,8 +323,13 @@ void lsc_init_address(int CFG){
 	if (CFG==0){
 	 write_buf[2]= 0x01;
 	}
-	else {
+	else if (CFG==1) {
 	write_buf[2] =0x02;	
+	}
+	
+	else{
+		printf("Not a valid sector");
+		exit(0);
 	}
     
 	gpiod_line_set_value(cs, 1);
@@ -374,17 +379,24 @@ void isc_erase_sram(){
 
 }
 
-void isc_erase_flash(){
-    
-	unsigned char write_buf[6] = { 0x0E ,0x00,0x01,0x00};
+void isc_erase_flash(int CFG){
 	
-    
+	
+	unsigned char write_buf[6] = { 0x0E ,0x00,0x01,0x00};
+	if (CFG==0){
+	write_buf[2]=0x01;
+	}
+	else{
+		
+	write_buf[2]=0x02;	
+	}
+	
 	gpiod_line_set_value(cs, 1);
 	usleep(1);
 	gpiod_line_set_value(cs, 0);
 	rbpi_tx(write_buf,4);
 	gpiod_line_set_value(cs, 1);
-	printf("Erasing Flash");
+	printf("Erasing Flash CFG %d.....",CFG);
 	printf("\n");
 
 }
@@ -463,3 +475,87 @@ void program_data(){
 }
 
 
+
+void program_internal_flash(int CFG){
+	
+if(CFG==0 || CFG==1){
+ printf("============================================\n");
+ printf("Erase, Program, Verify of CFG %d \n", CFG);	
+ printf("============================================\n");
+ printf("\n");
+
+}
+
+else{
+printf("Not Valid CFG sector \n");	
+exit(0);
+	
+}
+
+    usleep(1000);
+    //Device ID read 	
+    device_id();
+    
+    usleep(10);
+    //ISC_ENABLE
+    isc_enable_sram();
+    usleep(10);
+    
+    //ISC_ERASE
+    isc_erase_sram();
+    usleep(10);
+    
+    //ISC_ENABLE FLASH
+    isc_enable_flash();
+    
+    usleep(100);
+    
+      //Init CFG Address
+    lsc_init_address(CFG);
+
+    
+    //Erase Flash
+    int busy_flag=1;
+    isc_erase_flash(CFG);
+    
+  
+    
+    while (busy_flag==1){//Polling Status Register for busy flag
+    sleep(20);// long wait time to give time to erase
+    busy_flag=sr_check(0);// Check if device is still busy
+ 
+    }
+    printf("Finished Erasing flash CFG %d.....\n",CFG);
+    
+    //Init CFG Address
+    lsc_init_address(CFG);
+    usleep(1000);
+    
+    
+    //Program Internal Flash
+    program_data();
+
+    usleep(1000);
+
+    //Init CFG Address
+    lsc_init_address(CFG);
+    
+    //Verifying internal flash
+    verify_data();
+
+
+    //Init CFG0 Address
+    
+    lsc_init_address(CFG);
+    
+    program_done();
+
+    //Status Register Check, DONE=1 and Fail=0
+    sr_check(1);//Argument of 1 means DONE bit is expected to be 1
+	
+  
+   printf("\n");
+   sleep(1);
+	
+	
+}
