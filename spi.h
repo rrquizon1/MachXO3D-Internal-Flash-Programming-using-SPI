@@ -24,10 +24,12 @@ void lsc_init_address();
 void isc_disable();
 void isc_erase_sram();
 void isc_erase_flash(int CFG);
+void isc_erase_feature();
 void fast_program();
 void program_done();
-void verify_data();
-void program_data();
+void verify_data(int CFG);
+void program_data(int CFG);
+void program_feature_row();
 
 void program_internal_flash(int CFG);
 

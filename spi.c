@@ -13,8 +13,11 @@
 #include <sys/mman.h>
 #include <gpiod.h>
 #include "spi_data.h"
+#include "spi_data_golden.h"
 #include "spi.h"
+#include "feature_row.h"
 #define num_chunks (g_iDataSize+16-1)/16
+#define num_chunks_golden (g_iDataSize_golden+16-1)/16
 
 
 static uint32_t speed;
@@ -318,13 +321,18 @@ void isc_enable_flash(){
 
 
 
-void lsc_init_address(int CFG){
+void lsc_init_address(int CFG){ // CFG0 CFG1 Feature Row
 	unsigned char write_buf[4] = { 0x46,0x00,0x01,0x00};	
 	if (CFG==0){
 	 write_buf[2]= 0x01;
 	}
 	else if (CFG==1) {
 	write_buf[2] =0x02;	
+	}
+
+	else if (CFG==3) {
+	write_buf[2] =0x00;	
+	write_buf[1] =0x04;	
 	}
 	
 	else{
@@ -340,11 +348,16 @@ void lsc_init_address(int CFG){
 	if (CFG==0){
 	printf("Init Adress CFG0");}
 	
-	else {
+	else if (CFG==1) {
 		printf("Init Adress CFG1");
+		
 	}
-	printf("\n");
-
+	
+	else if (CFG==2){
+			printf("Init Address Feature Row");
+	}
+	
+printf("\n");
 }
 
 void isc_disable(){
@@ -375,6 +388,21 @@ void isc_erase_sram(){
 	rbpi_tx(write_buf,4);
 	gpiod_line_set_value(cs, 1);
 	printf("SRAM Erased");
+	printf("\n");
+
+}
+
+void isc_erase_feature(){
+    
+	unsigned char write_buf[6] = { 0x0E ,0x04,0x00,0x00};
+	
+    
+	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(write_buf,4);
+	gpiod_line_set_value(cs, 1);
+	printf("Feature Row Erased");
 	printf("\n");
 
 }
@@ -430,10 +458,11 @@ void fast_program(){
 	
 }
 
-void verify_data(){
+void verify_data(int CFG){
 	unsigned char read_bitstream[g_iDataSize];	
 	unsigned char lsc_read_incr[4]= {0x73,0x00,0x00,0x00};	
 	printf("Verifying internal flash..\n");
+	if (CFG==0){
 	for(int k=0;k<num_chunks;k++){
 		gpiod_line_set_value(cs, 1);
 		usleep(1);
@@ -444,35 +473,147 @@ void verify_data(){
 		usleep(1000);
 	}
 	
+
+	
 	if (memcmp(g_pucDataArray, read_bitstream, g_iDataSize) == 0) {
         printf("Erase, Program, Verify Succesful!\n");
 	} else {
         printf("Wrong data read out Erase, Program, Verify fail!\n");
-	//exit(0);
-    }
+	
+    }}
+    
+    
+    	else{
+	for(int k=0;k<num_chunks_golden;k++){
+		gpiod_line_set_value(cs, 1);
+		usleep(1);
+		gpiod_line_set_value(cs, 0);
+		rbpi_tx(lsc_read_incr,4);
+		rbpi_rx(&read_bitstream[k*16],16);
+		gpiod_line_set_value(cs, 1);
+		usleep(1000);
+	}		
+		if (memcmp(g_pucDataArray_golden, read_bitstream, g_iDataSize_golden) == 0) {
+			printf("Erase, Program, Verify Succesful!\n");
+			} else {
+		printf("Wrong data read out Erase, Program, Verify fail!\n");
 	
 	
 	
+	}
+	
+	
+	}
+
 }
 
 
-void program_data(){
+void program_data(int CFG){
    unsigned char lsc_prog_incr[4]= {0x70,0x00,0x00,0x00};
    printf("Programming internal flash..\n");
+   if (CFG==0){
    for(int k=0;k<num_chunks;k++){
   	gpiod_line_set_value(cs, 1);
 	usleep(1);
 	gpiod_line_set_value(cs, 0);
 	rbpi_tx(lsc_prog_incr,4);
+	
 	rbpi_tx(&g_pucDataArray[k*16],16);
 	gpiod_line_set_value(cs, 1);
-    usleep(1000);
+	usleep(1000);
+  }}
+  
+  else{
+   for(int k=0;k<num_chunks_golden;k++){
+  	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(lsc_prog_incr,4);
+	
+	rbpi_tx(&g_pucDataArray_golden[k*16],16);
+	gpiod_line_set_value(cs, 1);
+	usleep(1000);
+  }	  
+	  
+	  
+	  
   }
 	
 
 	
 	
 }
+
+
+void program_feature_row(){
+   unsigned char lsc_prog_feature[4]= {0xE4,0x00,0x00,0x00};
+   unsigned char lsc_read_feature[4]= {0xE7,0x00,0x00,0x00};
+   unsigned char lsc_prog_feabits[4]= {0xF8,0x00,0x00,0x00};
+   unsigned char lsc_read_feabits[4]= {0xFB,0x00,0x00,0x00};
+   unsigned char feature_read[16];
+   unsigned char feabits_read[4];
+ printf("============================================\n");
+ printf("Programming Feature Row \n");	
+ printf("============================================\n");
+
+     isc_enable_flash();
+     usleep(1000);
+    lsc_init_address(3);
+    usleep(1000);
+    isc_erase_feature();
+    sleep(5);
+
+   
+  	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(lsc_prog_feature,4);
+	rbpi_tx(feature_row,16);
+	gpiod_line_set_value(cs, 1);
+	sleep(5); //to optimize wait time use polling of busy bit
+	
+	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(lsc_read_feature,4);
+	rbpi_rx(feature_read,16);
+	gpiod_line_set_value(cs, 1);
+	
+	if (memcmp(feature_row, feature_read, 16) == 0) {
+		printf("Feature Row Programming Successful!\n");
+		} else {
+		printf("Wrong feature row written!\n");
+	
+	exit(0);}
+	
+	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(lsc_prog_feabits,4);
+	rbpi_tx(feature_bits,4);
+	gpiod_line_set_value(cs, 1);
+	sleep(5);
+	
+	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(lsc_read_feabits,4);
+	rbpi_rx(feabits_read,4);
+	gpiod_line_set_value(cs, 1);
+    
+	if (memcmp(feature_bits, feabits_read, 4) == 0) {
+		printf("Feature Bits Programming Successful!\n");
+		} else {
+		printf("Wrong feature bits written!\n");
+	
+	exit(0);}	
+	
+
+	
+	
+}
+
+
 
 
 
@@ -533,7 +674,7 @@ exit(0);
     
     
     //Program Internal Flash
-    program_data();
+    program_data(CFG);
 
     usleep(1000);
 
@@ -541,7 +682,7 @@ exit(0);
     lsc_init_address(CFG);
     
     //Verifying internal flash
-    verify_data();
+    verify_data(CFG);
 
 
     //Init CFG0 Address

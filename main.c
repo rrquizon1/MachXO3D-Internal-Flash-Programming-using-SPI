@@ -14,6 +14,7 @@
 #include <gpiod.h>
 #include "spi_data.h"
 #include "spi.h"
+#include "feature_row.h"
 //#include "data.h"
 
 
@@ -26,10 +27,14 @@ struct gpiod_line *prgrmn;
 
 int main() {
     
-    spi_init(10000*1024,&cs,&prgrmn);
+    spi_init(15000*1024,&cs,&prgrmn);
     program_internal_flash(0);
     program_internal_flash(1);
+   program_feature_row();
     isc_disable();
+   
+   
+
     
     
    
