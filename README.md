@@ -49,6 +49,8 @@ You could use a simple script to turn this into a hexadecimal array:
 
 5. This example assumes CFG0 will be the primary image while CFG1 is the golden image. Consult FPGA-TN-02069-1.7 for more modifications that could be done.
 
+6. Take note that this example assumes that the device is not secured. If you are programming a secured device, you need to check FPGA-TN-02069 1.7 for the complete flow.
+
 
 You can modify the primary and golden image by modifying the g_pucDataArray and g_pucDataArray_golden from spi_data.c and spi_data_golden.c respectively. 
 ![image](https://github.com/user-attachments/assets/0b97fc76-90ae-481d-8d7f-209618321ae2)
@@ -56,9 +58,19 @@ You can modify the primary and golden image by modifying the g_pucDataArray and 
 
 
 
+Feature Row and Feature bits data can be modified at feature_row.c:
+![image](https://github.com/user-attachments/assets/2fff93ea-87e9-4c8b-9560-d5e91919e1dd)
+
+Take note that to program the feature row there should be 8 zeros padding at the beginning while feature bits are as is:
+![image](https://github.com/user-attachments/assets/4a4c8873-04ef-40a5-9dcd-d7fcc62c2ea3)
+
+The main.c is modular listing only the main instructions such as SPI initialization, programing internal flash, and feature row programming:
+![image](https://github.com/user-attachments/assets/969f45e0-fac6-40ce-b5f9-9b8edf1e05b4)
 
 
 
+Sample terminal run:
+![image](https://github.com/user-attachments/assets/d588a8f3-7cfa-48f7-9ecb-5b8b6dc87a81)
 
 
 
