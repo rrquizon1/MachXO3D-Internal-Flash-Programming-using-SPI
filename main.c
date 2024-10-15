@@ -27,11 +27,11 @@ struct gpiod_line *prgrmn;
 
 int main() {
     
-    spi_init(15000*1024,&cs,&prgrmn);
-    program_internal_flash(0);
-    program_internal_flash(1);
-   program_feature_row();
-    isc_disable();
+    spi_init(15000*1024,&cs,&prgrmn);// initializes SPI bus and GPIO signals
+    program_internal_flash(0);// Programs CFG0
+    program_internal_flash(1);//Programs CFG1
+    program_feature_row(); //Programs Feature Row
+    isc_disable();// Exits Usermode
    
    
 
