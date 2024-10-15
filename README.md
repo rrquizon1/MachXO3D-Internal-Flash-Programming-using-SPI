@@ -14,7 +14,7 @@ spi_data.c- contains the primary image to be programmed at CFG0
 
 spi_data_golden.c-contains the golden image to be programmed at CFG1
 
-feature_row.c-contains the feature row information taken from .fea file.
+feature_row.c-contains the feature row and feature bits information taken from .fea file.
 
 
 Steps to run the project:
@@ -25,8 +25,9 @@ Steps to run the project:
 
 Some keypoints and other pointers for this example. 
 
-1. This example, uses SSPI make sure that you SLAVE_SPI_PORT ENABLED in the global preferences in your project:
-   ![image](https://github.com/user-attachments/assets/d19f59ff-a773-4745-ac3b-863802c9beb1)
+1. This example, uses SSPI make sure that you SLAVE_SPI_PORT ENABLED in the global preferences in your project and also have dual boot enabled by setting the PRIMARY_BOOT and SECONDARY_BOOT settings below:
+   ![image](https://github.com/user-attachments/assets/cba0de3a-5ae8-41d4-a729-4a8d83487774)
+
 
    This setting is stored in the fea files, so once you programmed the fea file and have SLAVE_SPI_PORT disabled, communication with SPI will not work any more.
 
