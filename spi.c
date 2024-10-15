@@ -314,8 +314,8 @@ void isc_enable_flash(){
 	gpiod_line_set_value(cs, 0);
 	rbpi_tx(write_buf,4);
 	gpiod_line_set_value(cs, 1);
-	printf("Device Enters Programming Mode: Flash");
-	printf("\n");
+	printf("Device Enters Programming Mode: Flash\n");
+	//printf("\n");
 
 }
 
@@ -346,18 +346,18 @@ void lsc_init_address(int CFG){ // CFG0 CFG1 Feature Row
 	rbpi_tx(write_buf,4);
 	gpiod_line_set_value(cs, 1);
 	if (CFG==0){
-	printf("Init Adress CFG0");}
+	printf("Init Adress CFG0\n");}
 	
 	else if (CFG==1) {
-		printf("Init Adress CFG1");
+		printf("Init Adress CFG1\n");
 		
 	}
 	
 	else if (CFG==2){
-			printf("Init Address Feature Row");
+			printf("Init Address Feature Row\n");
 	}
 	
-printf("\n");
+//printf("\n");
 }
 
 void isc_disable(){
@@ -555,6 +555,7 @@ void program_feature_row(){
  printf("============================================\n");
  printf("Programming Feature Row \n");	
  printf("============================================\n");
+ printf("\n");
 
      isc_enable_flash();
      usleep(1000);
