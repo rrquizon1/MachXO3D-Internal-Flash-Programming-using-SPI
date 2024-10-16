@@ -49,13 +49,19 @@ You could use a simple script to turn this into a hexadecimal array:
 4. This example uses a fixed wait command after programming of a page. For optimal programming, you could used a status register read monitoring busy bit. For simplicity of implementation a fixed delay is used. The same could be done for erase command implementations.
 
 5. This example assumes CFG0 will be the primary image while CFG1 is the golden image. Consult FPGA-TN-02069-1.7 for more modifications that could be done.
+   
+   
+6. The usercode in the jed file can be found at the bottom:
+![image](https://github.com/user-attachments/assets/ee66e61a-cee3-467d-bc73-d1772d335f15)
 
-6. Take note that this example assumes that the device is not secured. If you are programming a secured device, you need to check FPGA-TN-02069 1.7 for the complete flow.
 
 
-You can modify the primary and golden image by modifying the g_pucDataArray and g_pucDataArray_golden from spi_data.c and spi_data_golden.c respectively. 
-![image](https://github.com/user-attachments/assets/0b97fc76-90ae-481d-8d7f-209618321ae2)
-![image](https://github.com/user-attachments/assets/5db25c2b-3906-4d1a-92e6-9a6e1f9a9a37)
+7. Take note that this example assumes that the device is not secured. If you are programming a secured device, you need to check FPGA-TN-02069 1.7 for the complete flow.
+
+
+You can modify the primary and golden image by modifying the g_pucDataArray and g_pucDataArray_golden from spi_data.c and spi_data_golden.c respectively. Usercode of CFG0 and CFG1 can also be programmed using this example. Just modify the usercode0 for the intended usercode of CFG0 image and usercode1 for CFG1 image.
+![image](https://github.com/user-attachments/assets/fa0e23b9-d9ff-41bf-a72e-758cd7ec684b)
+![image](https://github.com/user-attachments/assets/6dbd8ad9-7dfc-4e59-9084-484407aac278)
 
 
 
