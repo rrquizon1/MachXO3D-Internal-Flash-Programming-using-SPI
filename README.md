@@ -79,7 +79,8 @@ The main.c is modular listing only the main instructions such as SPI initializat
 
 Sample terminal run:
 
-![image](https://github.com/user-attachments/assets/d588a8f3-7cfa-48f7-9ecb-5b8b6dc87a81)
+![image](https://github.com/user-attachments/assets/dd01dc21-8db9-4496-98e3-4e694658642e)
+
 
 
 
