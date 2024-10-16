@@ -615,7 +615,26 @@ void program_feature_row(){
 }
 
 
+void program_usercode(int CFG){
+	unsigned char write_buf[6] = { 0xC2 ,0x00,0x00,0x00};
+	
+	
+	gpiod_line_set_value(cs, 1);
+	usleep(1);
+	gpiod_line_set_value(cs, 0);
+	rbpi_tx(write_buf,4);
+	if (CFG==0){
+	rbpi_tx(usercode0,4);
+	}
+	
+	else {
+	rbpi_tx(usercode1,4);	
+		
+	}
+	gpiod_line_set_value(cs, 1);
 
+	printf("Program Usercode Successful!\n");
+}
 
 
 void program_internal_flash(int CFG){
@@ -690,6 +709,10 @@ exit(0);
     
     lsc_init_address(CFG);
     
+    program_usercode(CFG);
+    
+    
+    lsc_init_address(CFG);
     program_done();
 
     //Status Register Check, DONE=1 and Fail=0

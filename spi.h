@@ -29,6 +29,7 @@ void fast_program();
 void program_done();
 void verify_data(int CFG);
 void program_data(int CFG);
+void program_usercode(int CFG);
 void program_feature_row();
 
 void program_internal_flash(int CFG);
