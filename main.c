@@ -31,7 +31,7 @@ int main() {
     program_internal_flash(0);// Programs CFG0
     program_internal_flash(1);//Programs CFG1
     program_feature_row(); //Programs Feature Row
-    isc_disable();// Exits Usermode
+    isc_disable();// Exits Programming Mode
    
    
 
