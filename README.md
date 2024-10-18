@@ -71,7 +71,7 @@ Feature Row and Feature bits data can be modified at feature_row.c:
 Take note that to program the feature row there should be 8 zeros padding at the beginning while feature bits are as is:
 ![image](https://github.com/user-attachments/assets/4a4c8873-04ef-40a5-9dcd-d7fcc62c2ea3)
 
-The main.c is modular listing only the main instructions such as SPI initialization, programing internal flash, and feature row programming:
+The main.c file is modular, focusing solely on key operations such as SPI initialization, programming the internal flash, and configuring the feature row:
 
 ![image](https://github.com/user-attachments/assets/431a1f14-cb54-46e2-8571-7e2f0abf465e)
 
