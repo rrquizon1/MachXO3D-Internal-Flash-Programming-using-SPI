@@ -73,7 +73,8 @@ Take note that to program the feature row there should be 8 zeros padding at the
 
 The main.c is modular listing only the main instructions such as SPI initialization, programing internal flash, and feature row programming:
 
-![image](https://github.com/user-attachments/assets/969f45e0-fac6-40ce-b5f9-9b8edf1e05b4)
+![image](https://github.com/user-attachments/assets/431a1f14-cb54-46e2-8571-7e2f0abf465e)
+
 
 
 
